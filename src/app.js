@@ -10,6 +10,7 @@ const AudioRoom = require("./models/AudioRoom");
 const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const PollNQna = require("./models/PollNQna");
+const Comment = require("./models/Comment");
 
 mongoose
     .connect(
@@ -128,7 +129,7 @@ app.post("/create-pollqna", async (req, res) => {
         let pollNQna = new PollNQna();
         pollNQna.audio_room_id = req.body?.audioRoomId.toString();
         pollNQna.question = req.body?.question.toString();
-        pollNQna.options = req.body?.options; // options: [{option_id: <id>, option_name: "abc", is_right_answer: bool (if qna)}]
+        pollNQna.options = req.body?.options; // options: [{option_id: <id>, option_name: "abc", is_right_answer: bool (if qna) answered_by: userId}]
         pollNQna.isPoll = req.body?.is_poll;
         pollNQna.community_id = req.body?.communityId.toString();
         pollNQna.isExpired = false;
@@ -152,6 +153,38 @@ app.post("/expire-pollqna", async (req, res) => {
         ).lean();
 
         return res.json({ pollNQnaDetails: newPollQna });
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
+});
+
+app.post("/comment", async (req, res) => {
+    try {
+        let newComment = new Comment();
+
+        newComment.user_id = req.body?.userId.toString();
+        newComment.text = req.body?.text.toString();
+        newComment.reaction = req.body?.reaction.toString() ?? "";
+        newComment.is_by_creator = req.body?.isByCreator;
+        newComment.audio_room_id = req.body?.audioRoomId.toString();
+
+        const commentDetails = (await newComment.save()).toJSON();
+
+        return res.json({ commentDetails: commentDetails });
+    } catch (e) {
+        console.log(e);
+        throw e;
+    }
+});
+
+app.post("/get-comments", async (req, res) => {
+    try {
+        const comments = Comment.find({
+            audio_room_id: req.body?.audioRoomId.toString(),
+        }).lean();
+
+        return res.json({ comments: comments });
     } catch (e) {
         console.log(e);
         throw e;

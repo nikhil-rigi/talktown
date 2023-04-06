@@ -6,6 +6,7 @@ var commentSchema = new mongoose.Schema(
         text: String,
         reaction: String,
         audio_room_id: String,
+        is_by_creator: Boolean,
     },
     { timestamps: true }
 );
