@@ -63,10 +63,20 @@ app.post("/join-room", async (req, res) => {
         const communityId = req.body?.communityId.toString();
         const audioUrl = req.body?.audioUrl.toString();
         const userId = req.body?.userId.toString();
+
+        const room = await AudioRoom.findOne({
+            url: audioUrl,
+            community_id: communityId,
+        }).lean();
+
+        if (room.start_datetime < Date.now().toString()) {
+            console.log("Meeting not started yet");
+            return res.json({ message: "Meeting has not started yet" });
+        }
+
         const roomData = await AudioRoom.findOneAndUpdate(
             { url: audioUrl, community_id: communityId },
-            { $push: { participants: userId } },
-            { new: true }
+            { $push: { participants: userId } }
         ).lean();
         return res.json({ roomDetails: roomData });
     } catch (e) {
