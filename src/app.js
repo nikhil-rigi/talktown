@@ -11,15 +11,13 @@ const mongoose = require("mongoose");
 const bodyParser = require("body-parser");
 const PollNQna = require("./models/PollNQna");
 const Comment = require("./models/Comment");
+require("dotenv").config();
 
 mongoose
-    .connect(
-        "mongodb+srv://NikhilDhoot:dbPass123@practice.jnubr.gcp.mongodb.net/hackathon?retryWrites=true&w=majority",
-        {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        }
-    )
+    .connect(process.env.MONGO_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true,
+    })
     .then(() => console.log("Database connected!"))
     .catch((err) => console.log(err));
 

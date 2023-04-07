@@ -5,6 +5,7 @@
   "main": "src/app.js",
   "dependencies": {
     "body-parser": "^1.20.2",
+    "dotenv": "^16.0.3",
     "express": "^4.17.3",
     "mongoose": "^7.0.3",
     "morgan": "^1.10.0",
